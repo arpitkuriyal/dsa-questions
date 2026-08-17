@@ -49,7 +49,23 @@ func inorderTraversal(root *TreeNode) []int {
 	return result
 }
 
-// 3. Level Order Traversal (BFS)
+func postorderTraversal(root *TreeNode) []int {
+	result := []int{}
+	var traverse func(*TreeNode)
+	traverse = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		traverse(node.Left)
+		traverse(node.Right)
+		result = append(result, node.Val)
+	}
+
+	traverse(root)
+	return result
+}
+
+// 4. Level Order Traversal (BFS)
 func levelOrder(root *TreeNode) [][]int {
 	if root == nil {
 		return [][]int{}
@@ -79,7 +95,7 @@ func levelOrder(root *TreeNode) [][]int {
 	return result
 }
 
-// 4. Maximum Depth (DFS)
+// 5. Maximum Depth (DFS)
 func maxDepth(root *TreeNode) int {
 	if root == nil {
 		return 0
@@ -93,7 +109,7 @@ func maxDepth(root *TreeNode) int {
 	return right + 1
 }
 
-// 5. Same Tree
+// 6. Same Tree
 func isSameTree(p, q *TreeNode) bool {
 	if p == nil || q == nil {
 		return p == q
@@ -104,7 +120,7 @@ func isSameTree(p, q *TreeNode) bool {
 		isSameTree(p.Right, q.Right)
 }
 
-// 6. Symmetric Tree
+// 7. Symmetric Tree
 func isSymmetric(root *TreeNode) bool {
 	if root == nil {
 		return true
@@ -124,7 +140,7 @@ func isSymmetric(root *TreeNode) bool {
 	return isMirror(root.Left, root.Right)
 }
 
-// 7. Invert Binary Tree
+// 8. Invert Binary Tree
 func invertTree(root *TreeNode) *TreeNode {
 	if root == nil {
 		return nil
@@ -134,7 +150,7 @@ func invertTree(root *TreeNode) *TreeNode {
 	return root
 }
 
-// 8. Balanced Binary Tree
+// 9. Balanced Binary Tree
 func isBalanced(root *TreeNode) bool {
 	var height func(*TreeNode) int
 	height = func(node *TreeNode) int {
@@ -157,7 +173,7 @@ func isBalanced(root *TreeNode) bool {
 	return height(root) != -1
 }
 
-// 9. Path Sum
+// 10. Path Sum
 func hasPathSum(root *TreeNode, target int) bool {
 	if root == nil {
 		return false
@@ -170,7 +186,7 @@ func hasPathSum(root *TreeNode, target int) bool {
 	return hasPathSum(root.Left, target) || hasPathSum(root.Right, target)
 }
 
-// 10. Diameter of Binary Tree
+// 11. Diameter of Binary Tree
 func diameterOfBinaryTree(root *TreeNode) int {
 	maxDiameter := 0
 	var height func(*TreeNode) int
@@ -194,7 +210,7 @@ func diameterOfBinaryTree(root *TreeNode) int {
 	return maxDiameter
 }
 
-// 11. Validate BST
+// 12. Validate BST
 func isValidBST(root *TreeNode) bool {
 	return validate(root, nil, nil)
 }
@@ -214,7 +230,7 @@ func validate(node *TreeNode, min, max *int) bool {
 		validate(node.Right, &node.Val, max)
 }
 
-// 12. Lowest Common Ancestor
+// 13. Lowest Common Ancestor
 func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
 	if root == nil || root == p || root == q {
 		return root
@@ -249,9 +265,10 @@ func main() {
 
 	fmt.Println("1. Preorder Traversal:", preorderTraversal(root))
 	fmt.Println("2. Inorder Traversal:", inorderTraversal(root))
-	fmt.Println("3. Level Order:", levelOrder(root))
-	fmt.Println("4. Max Depth:", maxDepth(root))
-	fmt.Println("5. Same Tree:", isSameTree(root, buildTree()))
+	fmt.Println("3. Postorder Traversal:", postorderTraversal(root))
+	fmt.Println("4. Level Order:", levelOrder(root))
+	fmt.Println("5. Max Depth:", maxDepth(root))
+	fmt.Println("6. Same Tree:", isSameTree(root, buildTree()))
 
 	symmetric := &TreeNode{
 		Val: 1,
@@ -266,24 +283,24 @@ func main() {
 			Right: &TreeNode{Val: 3},
 		},
 	}
-	fmt.Println("6. Is Symmetric:", isSymmetric(symmetric))
+	fmt.Println("7. Is Symmetric:", isSymmetric(symmetric))
 
 	inverted := invertTree(buildTree())
-	fmt.Println("7. Inverted Tree Level Order:", levelOrder(inverted))
+	fmt.Println("8. Inverted Tree Level Order:", levelOrder(inverted))
 
-	fmt.Println("8. Is Balanced:", isBalanced(root))
-	fmt.Println("9. Path Sum (target=30):", hasPathSum(root, 30))
-	fmt.Println("10. Diameter:", diameterOfBinaryTree(root))
+	fmt.Println("9. Is Balanced:", isBalanced(root))
+	fmt.Println("10. Path Sum (target=30):", hasPathSum(root, 30))
+	fmt.Println("11. Diameter:", diameterOfBinaryTree(root))
 
 	bst := &TreeNode{
 		Val:   2,
 		Left:  &TreeNode{Val: 1},
 		Right: &TreeNode{Val: 3},
 	}
-	fmt.Println("11. Is Valid BST:", isValidBST(bst))
+	fmt.Println("12. Is Valid BST:", isValidBST(bst))
 
 	p := root.Right.Left  // 15
 	q := root.Right.Right // 7
 	lca := lowestCommonAncestor(root, p, q)
-	fmt.Println("12. LCA of 15 and 7:", lca.Val)
+	fmt.Println("13. LCA of 15 and 7:", lca.Val)
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"sort"
 )
 
 type MinStack struct {
@@ -39,6 +40,44 @@ func (m *MinStack) getMin() int {
 func (m *MinStack) GetRandom() int {
 	idx := rand.Intn(len(m.arr))
 	return m.arr[idx]
+}
+
+// MyQueue implements a FIFO queue using two LIFO stacks.
+type MyQueue struct {
+	in  []int
+	out []int
+}
+
+func (q *MyQueue) push(val int) {
+	q.in = append(q.in, val)
+}
+
+func (q *MyQueue) moveToOut() {
+	if len(q.out) > 0 {
+		return
+	}
+
+	for len(q.in) > 0 {
+		top := q.in[len(q.in)-1]
+		q.in = q.in[:len(q.in)-1]
+		q.out = append(q.out, top)
+	}
+}
+
+func (q *MyQueue) pop() int {
+	q.moveToOut()
+	top := q.out[len(q.out)-1]
+	q.out = q.out[:len(q.out)-1]
+	return top
+}
+
+func (q *MyQueue) peek() int {
+	q.moveToOut()
+	return q.out[len(q.out)-1]
+}
+
+func (q *MyQueue) empty() bool {
+	return len(q.in) == 0 && len(q.out) == 0
 }
 
 func parantheseCheck(s string) bool {
@@ -128,11 +167,105 @@ func dailyTemperatures(t []int) []int {
 	return ans
 }
 
+type priceSpan struct {
+	price int
+	span  int
+}
+
+// StockSpanner returns the span of consecutive prices less than or equal to
+// the latest price.
+type StockSpanner struct {
+	stack []priceSpan
+}
+
+func (s *StockSpanner) next(price int) int {
+	span := 1
+	for len(s.stack) > 0 && s.stack[len(s.stack)-1].price <= price {
+		span += s.stack[len(s.stack)-1].span
+		s.stack = s.stack[:len(s.stack)-1]
+	}
+
+	s.stack = append(s.stack, priceSpan{price: price, span: span})
+	return span
+}
+
+type car struct {
+	position int
+	time     float64
+}
+
+// carFleet returns the number of fleets that reach target.
+func carFleet(target int, position, speed []int) int {
+	cars := make([]car, len(position))
+	for i := range position {
+		cars[i] = car{
+			position: position[i],
+			time:     float64(target-position[i]) / float64(speed[i]),
+		}
+	}
+
+	sort.Slice(cars, func(i, j int) bool {
+		return cars[i].position < cars[j].position
+	})
+
+	fleets := 0
+	maxTime := 0.0
+	for i := len(cars) - 1; i >= 0; i-- {
+		if cars[i].time > maxTime {
+			fleets++
+			maxTime = cars[i].time
+		}
+	}
+
+	return fleets
+}
+
+// largestRectangleArea returns the largest rectangle that can be formed in a
+// histogram, using a monotonic increasing stack of bar indices.
+func largestRectangleArea(heights []int) int {
+	stack := []int{}
+	maxArea := 0
+
+	for i := 0; i <= len(heights); i++ {
+		currentHeight := 0
+		if i < len(heights) {
+			currentHeight = heights[i]
+		}
+
+		for len(stack) > 0 && currentHeight < heights[stack[len(stack)-1]] {
+			height := heights[stack[len(stack)-1]]
+			stack = stack[:len(stack)-1]
+
+			leftBoundary := -1
+			if len(stack) > 0 {
+				leftBoundary = stack[len(stack)-1]
+			}
+
+			width := i - leftBoundary - 1
+			if area := height * width; area > maxArea {
+				maxArea = area
+			}
+		}
+
+		stack = append(stack, i)
+	}
+
+	return maxArea
+}
+
 func main() {
 	// -----------------------------
-	// MinStack Demo
+	// Basic Stack
 	// -----------------------------
-	fmt.Println("=== MinStack Demo ===")
+	fmt.Println("=== Basic Stack ===")
+	fmt.Println("Reverse golang:", reverseString("golang"))
+	fmt.Println("Valid ()[]{}:", parantheseCheck("()[]{}"))
+	fmt.Println("Valid ([)]:", parantheseCheck("([)]"))
+
+	// -----------------------------
+	// Stack + Design
+	// -----------------------------
+	fmt.Println("\n=== MinStack Demo ===")
 
 	s := MinStack{}
 
@@ -161,26 +294,19 @@ func main() {
 	fmt.Println("Random:", s.GetRandom())
 
 	// -----------------------------
-	// Parentheses Check
+	// Queue Using Stacks
 	// -----------------------------
-	fmt.Println("\n=== Parentheses Check ===")
-
-	str1 := "()[]{}"
-	str2 := "([)]"
-
-	fmt.Println(str1, "->", parantheseCheck(str1))
-	fmt.Println(str2, "->", parantheseCheck(str2))
-
-	// -----------------------------
-	// Reverse String
-	// -----------------------------
-	fmt.Println("\n=== Reverse String ===")
-
-	word := "golang"
-	fmt.Println(word, "->", reverseString(word))
+	fmt.Println("\n=== Queue Using Stacks ===")
+	q := MyQueue{}
+	q.push(10)
+	q.push(20)
+	q.push(30)
+	fmt.Println("Peek:", q.peek())
+	fmt.Println("Pop:", q.pop())
+	fmt.Println("Empty:", q.empty())
 
 	// -----------------------------
-	// Next Greater Element
+	// Monotonic Stack
 	// -----------------------------
 	fmt.Println("\n=== Next Greater Element ===")
 
@@ -194,4 +320,28 @@ func main() {
 
 	temp := []int{73, 74, 75, 71, 69, 72, 76, 73}
 	fmt.Println(temp, "->", dailyTemperatures(temp))
+
+	// -----------------------------
+	// Stock Span
+	// -----------------------------
+	fmt.Println("\n=== Stock Span ===")
+	spanner := StockSpanner{}
+	prices := []int{100, 80, 60, 70, 60, 75, 85}
+	spans := make([]int, 0, len(prices))
+	for _, price := range prices {
+		spans = append(spans, spanner.next(price))
+	}
+	fmt.Println(prices, "->", spans)
+
+	// -----------------------------
+	// Car Fleet
+	// -----------------------------
+	fmt.Println("\n=== Car Fleet ===")
+	fmt.Println(carFleet(12, []int{10, 8, 0, 5, 3}, []int{2, 4, 1, 1, 3}))
+
+	// -----------------------------
+	// Largest Rectangle in Histogram
+	// -----------------------------
+	fmt.Println("\n=== Largest Rectangle in Histogram ===")
+	fmt.Println([]int{2, 1, 5, 6, 2, 3}, "->", largestRectangleArea([]int{2, 1, 5, 6, 2, 3}))
 }

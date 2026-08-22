@@ -4,7 +4,7 @@ import "fmt"
 
 // 1. Fundamentals
 
-// Question: Implement a Basic Queue.
+// Question 1: Implement a Basic Queue.
 // Queue is a basic FIFO queue.
 type Queue struct{ arr []int }
 
@@ -25,7 +25,7 @@ func (q *Queue) Peek() int {
 }
 func (q *Queue) IsEmpty() bool { return len(q.arr) == 0 }
 
-// Question: Implement a Circular Queue.
+// Question 2: Implement a Circular Queue.
 // CircularQueue reuses freed positions through circular indexing.
 type CircularQueue struct {
 	arr                   []int
@@ -66,7 +66,7 @@ func (q *CircularQueue) Rear() int {
 func (q *CircularQueue) IsEmpty() bool { return q.size == 0 }
 func (q *CircularQueue) IsFull() bool  { return q.size == q.capacity }
 
-// Question: Implement a Circular Deque.
+// Question 3: Implement a Circular Deque.
 // CircularDeque supports insertion and removal from both ends.
 type CircularDeque struct {
 	arr                   []int
@@ -124,7 +124,7 @@ func (d *CircularDeque) IsFull() bool  { return d.size == d.capacity }
 
 // 2. Queue <-> Stack
 
-// Question: Implement a Queue using 2 Stacks.
+// Question 4: Implement a Queue using 2 Stacks.
 // MyQueue implements a FIFO queue using two LIFO stacks.
 type MyQueue struct{ in, out []int }
 
@@ -157,7 +157,7 @@ func (q *MyQueue) Peek() int {
 }
 func (q *MyQueue) Empty() bool { return len(q.in) == 0 && len(q.out) == 0 }
 
-// Question: Implement a Stack using Queues.
+// Question 5: Implement a Stack using Queues.
 // StackUsingQueues implements a LIFO stack using one queue. Push is O(n).
 type StackUsingQueues struct{ queue []int }
 
@@ -186,7 +186,7 @@ func (s *StackUsingQueues) Empty() bool { return len(s.queue) == 0 }
 
 // 3. Queue + Window
 
-// Question: Find the First Negative in every Window of size k.
+// Question 6: Find the First Negative in every Window of size k.
 func firstNegative(nums []int, k int) []int {
 	if k <= 0 || k > len(nums) {
 		return []int{}
@@ -211,7 +211,7 @@ func firstNegative(nums []int, k int) []int {
 	return result
 }
 
-// Question: Find the Sliding Window Maximum.
+// Question 7: Find the Sliding Window Maximum.
 // maxSlidingWindow uses a decreasing deque of indices, so it runs in O(n).
 func maxSlidingWindow(nums []int, k int) []int {
 	if k <= 0 || k > len(nums) {
@@ -241,7 +241,7 @@ type TreeNode struct {
 	Left, Right *TreeNode
 }
 
-// Question: Binary Tree Level Order Traversal.
+// Question 8: Binary Tree Level Order Traversal.
 func levelOrder(root *TreeNode) [][]int {
 	if root == nil {
 		return [][]int{}
@@ -266,7 +266,7 @@ func levelOrder(root *TreeNode) [][]int {
 	return result
 }
 
-// Question: Rotting Oranges.
+// Question 9: Rotting Oranges.
 // orangesRotting returns the minutes needed to rot all fresh oranges, or -1.
 func orangesRotting(grid [][]int) int {
 	if len(grid) == 0 {
@@ -308,7 +308,7 @@ func orangesRotting(grid [][]int) int {
 	return minutes
 }
 
-// Question: Number of Islands.
+// Question 10: Number of Islands.
 func numIslands(grid [][]byte) int {
 	if len(grid) == 0 {
 		return 0
@@ -342,13 +342,13 @@ func numIslands(grid [][]byte) int {
 }
 
 func main() {
-	// Question: Implement a Basic Queue.
+	// Question 1: Implement a Basic Queue.
 	queue := Queue{}
 	queue.Enqueue(10)
 	queue.Enqueue(20)
 	fmt.Println("Basic queue:", queue.Dequeue(), queue.Peek())
 
-	// Question: Implement a Circular Queue.
+	// Question 2: Implement a Circular Queue.
 	circularQueue := NewCircularQueue(3)
 	circularQueue.EnQueue(1)
 	circularQueue.EnQueue(2)
@@ -357,38 +357,38 @@ func main() {
 	circularQueue.EnQueue(4)
 	fmt.Println("Circular queue:", circularQueue.Front(), circularQueue.Rear())
 
-	// Question: Implement a Circular Deque.
+	// Question 3: Implement a Circular Deque.
 	deque := NewCircularDeque(3)
 	deque.InsertLast(2)
 	deque.InsertFront(1)
 	deque.InsertLast(3)
 	fmt.Println("Circular deque:", deque.GetFront(), deque.GetRear())
 
-	// Question: Implement a Queue using 2 Stacks.
+	// Question 4: Implement a Queue using 2 Stacks.
 	stackQueue := MyQueue{}
 	stackQueue.Push(1)
 	stackQueue.Push(2)
 	fmt.Println("Queue using stacks:", stackQueue.Pop(), stackQueue.Peek())
 
-	// Question: Implement a Stack using Queues.
+	// Question 5: Implement a Stack using Queues.
 	queueStack := StackUsingQueues{}
 	queueStack.Push(1)
 	queueStack.Push(2)
 	fmt.Println("Stack using queues:", queueStack.Pop(), queueStack.Top())
 
-	// Question: Find the First Negative in every Window of size k.
+	// Question 6: Find the First Negative in every Window of size k.
 	fmt.Println("First negatives:", firstNegative([]int{12, -1, -7, 8, -15, 30, 16, 28}, 3))
 
-	// Question: Find the Sliding Window Maximum.
+	// Question 7: Find the Sliding Window Maximum.
 	fmt.Println("Window maximums:", maxSlidingWindow([]int{1, 3, -1, -3, 5, 3, 6, 7}, 3))
 
-	// Question: Binary Tree Level Order Traversal.
+	// Question 8: Binary Tree Level Order Traversal.
 	tree := &TreeNode{Val: 1, Left: &TreeNode{Val: 2}, Right: &TreeNode{Val: 3, Left: &TreeNode{Val: 4}}}
 	fmt.Println("Level order:", levelOrder(tree))
 
-	// Question: Rotting Oranges.
+	// Question 9: Rotting Oranges.
 	fmt.Println("Rotting oranges:", orangesRotting([][]int{{2, 1, 1}, {1, 1, 0}, {0, 1, 1}}))
 
-	// Question: Number of Islands.
+	// Question 10: Number of Islands.
 	fmt.Println("Number of islands:", numIslands([][]byte{{'1', '1', '0', '0'}, {'1', '0', '0', '1'}, {'0', '0', '1', '1'}}))
 }

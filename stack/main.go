@@ -6,165 +6,160 @@ import (
 	"sort"
 )
 
+// Question 1: Reverse a String using a Stack.
+func reverseString(s string) string {
+	stack := []rune{}
+	for _, ch := range s {
+		stack = append(stack, ch)
+	}
+
+	reversed := []rune{}
+	for len(stack) > 0 {
+		last := len(stack) - 1
+		reversed = append(reversed, stack[last])
+		stack = stack[:last]
+	}
+	return string(reversed)
+}
+
+// Question 2: Valid Parentheses.
+func parenthesesCheck(s string) bool {
+	stack := []rune{}
+	matchingOpeningBracket := map[rune]rune{')': '(', ']': '[', '}': '{'}
+
+	for _, ch := range s {
+		if ch == '(' || ch == '[' || ch == '{' {
+			stack = append(stack, ch)
+			continue
+		}
+		if len(stack) == 0 || stack[len(stack)-1] != matchingOpeningBracket[ch] {
+			return false
+		}
+		stack = stack[:len(stack)-1]
+	}
+	return len(stack) == 0
+}
+
+// Question 3: Design a Min Stack.
 type MinStack struct {
 	arr      []int
 	minStack []int
 }
 
-func (m *MinStack) push(val int) {
-	m.arr = append(m.arr, val)
-
-	if len(m.minStack) == 0 || val <= m.minStack[len(m.minStack)-1] {
-		m.minStack = append(m.minStack, val)
+func (m *MinStack) push(value int) {
+	m.arr = append(m.arr, value)
+	if len(m.minStack) == 0 || value <= m.minStack[len(m.minStack)-1] {
+		m.minStack = append(m.minStack, value)
 	}
 }
 
-func (m *MinStack) pop() {
-	val := m.arr[len(m.arr)-1]
-	m.arr = m.arr[:len(m.arr)-1]
-
-	if val == m.minStack[len(m.minStack)-1] {
+func (m *MinStack) pop() int {
+	if len(m.arr) == 0 {
+		return -1
+	}
+	last := len(m.arr) - 1
+	value := m.arr[last]
+	m.arr = m.arr[:last]
+	if value == m.minStack[len(m.minStack)-1] {
 		m.minStack = m.minStack[:len(m.minStack)-1]
 	}
-
+	return value
 }
 
 func (m *MinStack) top() int {
+	if len(m.arr) == 0 {
+		return -1
+	}
 	return m.arr[len(m.arr)-1]
 }
 
 func (m *MinStack) getMin() int {
+	if len(m.minStack) == 0 {
+		return -1
+	}
 	return m.minStack[len(m.minStack)-1]
 }
 
-func (m *MinStack) GetRandom() int {
-	idx := rand.Intn(len(m.arr))
-	return m.arr[idx]
+func (m *MinStack) getRandom() int {
+	if len(m.arr) == 0 {
+		return -1
+	}
+	return m.arr[rand.Intn(len(m.arr))]
 }
 
-// MyQueue implements a FIFO queue using two LIFO stacks.
+// Question 4: Implement a Queue using 2 Stacks.
 type MyQueue struct {
 	in  []int
 	out []int
 }
 
-func (q *MyQueue) push(val int) {
-	q.in = append(q.in, val)
-}
+func (q *MyQueue) push(value int) { q.in = append(q.in, value) }
 
 func (q *MyQueue) moveToOut() {
 	if len(q.out) > 0 {
 		return
 	}
-
 	for len(q.in) > 0 {
-		top := q.in[len(q.in)-1]
-		q.in = q.in[:len(q.in)-1]
-		q.out = append(q.out, top)
+		last := len(q.in) - 1
+		q.out = append(q.out, q.in[last])
+		q.in = q.in[:last]
 	}
 }
 
 func (q *MyQueue) pop() int {
 	q.moveToOut()
-	top := q.out[len(q.out)-1]
-	q.out = q.out[:len(q.out)-1]
-	return top
+	if len(q.out) == 0 {
+		return -1
+	}
+	last := len(q.out) - 1
+	value := q.out[last]
+	q.out = q.out[:last]
+	return value
 }
 
 func (q *MyQueue) peek() int {
 	q.moveToOut()
+	if len(q.out) == 0 {
+		return -1
+	}
 	return q.out[len(q.out)-1]
 }
 
-func (q *MyQueue) empty() bool {
-	return len(q.in) == 0 && len(q.out) == 0
-}
+func (q *MyQueue) isEmpty() bool { return len(q.in) == 0 && len(q.out) == 0 }
 
-func parantheseCheck(s string) bool {
-	stack := []rune{}
-
-	mp := map[rune]rune{
-		')': '(',
-		']': '[',
-		'}': '{',
-	}
-
-	for _, ch := range s {
-		if ch == '(' || ch == '{' || ch == '[' {
-			stack = append(stack, ch)
-		} else {
-			if len(stack) == 0 {
-				return false
-			}
-
-			top := stack[len(stack)-1]
-			stack = stack[:len(stack)-1]
-
-			if top != mp[ch] {
-				return false
-			}
-		}
-	}
-
-	return len(stack) == 0
-}
-
-func reverseString(s string) string {
-	stack := []rune{}
-
-	for _, ch := range s {
-		stack = append(stack, ch)
-	}
-
-	ans := []rune{}
-
-	for len(stack) > 0 {
-		top := stack[len(stack)-1]
-		stack = stack[:len(stack)-1]
-		ans = append(ans, top)
-	}
-
-	return string(ans)
-}
-
+// Question 5: Next Greater Element.
 func nextGreater(nums []int) []int {
-	n := len(nums)
-	ans := make([]int, n)
-
-	for i := range ans {
-		ans[i] = -1
+	answer := make([]int, len(nums))
+	for i := range answer {
+		answer[i] = -1
 	}
 
-	stack := []int{}
-
-	for i := 0; i < n; i++ {
+	stack := []int{} // Indices whose next greater value has not been found.
+	for i := range nums {
 		for len(stack) > 0 && nums[i] > nums[stack[len(stack)-1]] {
-			idx := stack[len(stack)-1]
+			index := stack[len(stack)-1]
 			stack = stack[:len(stack)-1]
-			ans[idx] = nums[i]
+			answer[index] = nums[i]
 		}
-
 		stack = append(stack, i)
 	}
-
-	return ans
+	return answer
 }
 
-func dailyTemperatures(t []int) []int {
-	n := len(t)
-	ans := make([]int, n)
-	stack := []int{}
+// Question 6: Daily Temperatures.
+func dailyTemperatures(temperatures []int) []int {
+	answer := make([]int, len(temperatures))
+	stack := []int{} // Indices of decreasing temperatures.
 
-	for i := 0; i < n; i++ {
-		for len(stack) > 0 && t[i] > t[stack[len(stack)-1]] {
-			idx := stack[len(stack)-1]
+	for i := range temperatures {
+		for len(stack) > 0 && temperatures[i] > temperatures[stack[len(stack)-1]] {
+			index := stack[len(stack)-1]
 			stack = stack[:len(stack)-1]
-			ans[idx] = i - idx
+			answer[index] = i - index
 		}
 		stack = append(stack, i)
 	}
-
-	return ans
+	return answer
 }
 
 type priceSpan struct {
@@ -172,11 +167,8 @@ type priceSpan struct {
 	span  int
 }
 
-// StockSpanner returns the span of consecutive prices less than or equal to
-// the latest price.
-type StockSpanner struct {
-	stack []priceSpan
-}
+// Question 7: Online Stock Span.
+type StockSpanner struct{ stack []priceSpan }
 
 func (s *StockSpanner) next(price int) int {
 	span := 1
@@ -184,7 +176,6 @@ func (s *StockSpanner) next(price int) int {
 		span += s.stack[len(s.stack)-1].span
 		s.stack = s.stack[:len(s.stack)-1]
 	}
-
 	s.stack = append(s.stack, priceSpan{price: price, span: span})
 	return span
 }
@@ -194,34 +185,26 @@ type car struct {
 	time     float64
 }
 
-// carFleet returns the number of fleets that reach target.
+// Question 8: Car Fleet.
 func carFleet(target int, position, speed []int) int {
 	cars := make([]car, len(position))
 	for i := range position {
-		cars[i] = car{
-			position: position[i],
-			time:     float64(target-position[i]) / float64(speed[i]),
-		}
+		cars[i] = car{position: position[i], time: float64(target-position[i]) / float64(speed[i])}
 	}
-
-	sort.Slice(cars, func(i, j int) bool {
-		return cars[i].position < cars[j].position
-	})
+	sort.Slice(cars, func(i, j int) bool { return cars[i].position < cars[j].position })
 
 	fleets := 0
-	maxTime := 0.0
+	slowestTime := 0.0
 	for i := len(cars) - 1; i >= 0; i-- {
-		if cars[i].time > maxTime {
+		if cars[i].time > slowestTime {
 			fleets++
-			maxTime = cars[i].time
+			slowestTime = cars[i].time
 		}
 	}
-
 	return fleets
 }
 
-// largestRectangleArea returns the largest rectangle that can be formed in a
-// histogram, using a monotonic increasing stack of bar indices.
+// Question 9: Largest Rectangle in Histogram.
 func largestRectangleArea(heights []int) int {
 	stack := []int{}
 	maxArea := 0
@@ -231,117 +214,62 @@ func largestRectangleArea(heights []int) int {
 		if i < len(heights) {
 			currentHeight = heights[i]
 		}
-
 		for len(stack) > 0 && currentHeight < heights[stack[len(stack)-1]] {
 			height := heights[stack[len(stack)-1]]
 			stack = stack[:len(stack)-1]
-
 			leftBoundary := -1
 			if len(stack) > 0 {
 				leftBoundary = stack[len(stack)-1]
 			}
-
 			width := i - leftBoundary - 1
 			if area := height * width; area > maxArea {
 				maxArea = area
 			}
 		}
-
 		stack = append(stack, i)
 	}
-
 	return maxArea
 }
 
 func main() {
-	// -----------------------------
-	// Basic Stack
-	// -----------------------------
-	fmt.Println("=== Basic Stack ===")
+	// Question 1: Reverse a String using a Stack.
 	fmt.Println("Reverse golang:", reverseString("golang"))
-	fmt.Println("Valid ()[]{}:", parantheseCheck("()[]{}"))
-	fmt.Println("Valid ([)]:", parantheseCheck("([)]"))
 
-	// -----------------------------
-	// Stack + Design
-	// -----------------------------
-	fmt.Println("\n=== MinStack Demo ===")
+	// Question 2: Valid Parentheses.
+	fmt.Println("Valid ()[]{}:", parenthesesCheck("()[]{}"))
+	fmt.Println("Valid ([)]:", parenthesesCheck("([)]"))
 
-	s := MinStack{}
+	// Question 3: Design a Min Stack.
+	minStack := MinStack{}
+	minStack.push(10)
+	minStack.push(20)
+	minStack.push(2)
+	fmt.Println("Min stack top/min/random:", minStack.top(), minStack.getMin(), minStack.getRandom())
 
-	s.push(10)
-	s.push(20)
-	s.push(30)
+	// Question 4: Implement a Queue using 2 Stacks.
+	queue := MyQueue{}
+	queue.push(10)
+	queue.push(20)
+	fmt.Println("Queue using stacks:", queue.pop(), queue.peek())
 
-	fmt.Println("Stack:", s.arr)
-	fmt.Println("MinStack:", s.minStack)
-	fmt.Println("Top:", s.top())
-	fmt.Println("Min:", s.getMin())
+	// Question 5: Next Greater Element.
+	fmt.Println("Next greater:", nextGreater([]int{2, 1, 3, 4}))
 
-	s.pop()
-	s.pop()
+	// Question 6: Daily Temperatures.
+	fmt.Println("Daily temperatures:", dailyTemperatures([]int{73, 74, 75, 71, 69, 72, 76, 73}))
 
-	s.push(2)
-	s.push(9)
-	s.push(3)
-	s.push(1)
-
-	fmt.Println("After Operations:")
-	fmt.Println("Stack:", s.arr)
-	fmt.Println("MinStack:", s.minStack)
-	fmt.Println("Top:", s.top())
-	fmt.Println("Min:", s.getMin())
-	fmt.Println("Random:", s.GetRandom())
-
-	// -----------------------------
-	// Queue Using Stacks
-	// -----------------------------
-	fmt.Println("\n=== Queue Using Stacks ===")
-	q := MyQueue{}
-	q.push(10)
-	q.push(20)
-	q.push(30)
-	fmt.Println("Peek:", q.peek())
-	fmt.Println("Pop:", q.pop())
-	fmt.Println("Empty:", q.empty())
-
-	// -----------------------------
-	// Monotonic Stack
-	// -----------------------------
-	fmt.Println("\n=== Next Greater Element ===")
-
-	nums := []int{2, 1, 3, 4}
-	fmt.Println(nums, "->", nextGreater(nums))
-
-	// -----------------------------
-	// Daily Temperatures
-	// -----------------------------
-	fmt.Println("\n=== Daily Temperatures ===")
-
-	temp := []int{73, 74, 75, 71, 69, 72, 76, 73}
-	fmt.Println(temp, "->", dailyTemperatures(temp))
-
-	// -----------------------------
-	// Stock Span
-	// -----------------------------
-	fmt.Println("\n=== Stock Span ===")
+	// Question 7: Online Stock Span.
 	spanner := StockSpanner{}
 	prices := []int{100, 80, 60, 70, 60, 75, 85}
 	spans := make([]int, 0, len(prices))
 	for _, price := range prices {
 		spans = append(spans, spanner.next(price))
 	}
-	fmt.Println(prices, "->", spans)
+	fmt.Println("Stock span:", spans)
 
-	// -----------------------------
-	// Car Fleet
-	// -----------------------------
-	fmt.Println("\n=== Car Fleet ===")
-	fmt.Println(carFleet(12, []int{10, 8, 0, 5, 3}, []int{2, 4, 1, 1, 3}))
+	// Question 8: Car Fleet.
+	fmt.Println("Car fleet:", carFleet(12, []int{10, 8, 0, 5, 3}, []int{2, 4, 1, 1, 3}))
 
-	// -----------------------------
-	// Largest Rectangle in Histogram
-	// -----------------------------
-	fmt.Println("\n=== Largest Rectangle in Histogram ===")
-	fmt.Println([]int{2, 1, 5, 6, 2, 3}, "->", largestRectangleArea([]int{2, 1, 5, 6, 2, 3}))
+	// Question 9: Largest Rectangle in Histogram.
+	fmt.Println("Largest rectangle:", largestRectangleArea([]int{2, 1, 5, 6, 2, 3}))
 }

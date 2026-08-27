@@ -344,6 +344,43 @@ func maxSubArray(nums []int) int {
 	return maxSum
 }
 
+func maxSubArrayProduct(nums []int) int {
+	currentMax := nums[0]
+	currentMin := nums[0]
+	answer := nums[0]
+
+	for i := 1; i < len(nums); i++ {
+		num := nums[i]
+
+		// A negative number swaps the roles of max and min
+		if num < 0 {
+			currentMax, currentMin = currentMin, currentMax
+		}
+
+		// Either start a new subarray or extend the old one
+		currentMax = max(num, currentMax*num)
+		currentMin = min(num, currentMin*num)
+
+		answer = max(answer, currentMax)
+	}
+
+	return answer
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
 // Min Size Subarray Sum (Window)
 func minSubArrayLen(target int, nums []int) int {
 	l := 0
@@ -426,6 +463,24 @@ func majorityElement(nums []int) int {
 		}
 	}
 	return candidate
+}
+
+// sort Colors
+func sortColors(nums []int) {
+	low, mid := 0, 0
+	high := len(nums) - 1
+	for mid <= high {
+		if nums[mid] == 0 {
+			nums[low], nums[mid] = nums[mid], nums[low]
+			low++
+			mid++
+		} else if nums[mid] == 1 {
+			mid++
+		} else {
+			nums[mid], nums[high] = nums[high], nums[mid]
+			high--
+		}
+	}
 }
 
 // Gas Station

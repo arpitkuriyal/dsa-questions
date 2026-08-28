@@ -191,24 +191,32 @@ func firstNegative(nums []int, k int) []int {
 	if k <= 0 || k > len(nums) {
 		return []int{}
 	}
-	negativeIndices := []int{}
-	result := make([]int, 0, len(nums)-k+1)
-	for i, value := range nums {
-		if value < 0 {
-			negativeIndices = append(negativeIndices, i)
+
+	res := make([]int, 0, len(nums)-k+1)
+	queue := make([]int, 0) // indices of negative numbers
+
+	for i, num := range nums {
+		if num < 0 {
+			queue = append(queue, i)
 		}
-		if len(negativeIndices) > 0 && negativeIndices[0] <= i-k {
-			negativeIndices = negativeIndices[1:]
-		}
+
 		if i >= k-1 {
-			if len(negativeIndices) == 0 {
-				result = append(result, 0)
+			windowStart := i - k + 1
+
+			// Remove indices outside the window.
+			for len(queue) > 0 && queue[0] < windowStart {
+				queue = queue[1:]
+			}
+
+			if len(queue) > 0 {
+				res = append(res, nums[queue[0]])
 			} else {
-				result = append(result, nums[negativeIndices[0]])
+				res = append(res, 0)
 			}
 		}
 	}
-	return result
+
+	return res
 }
 
 // Question 7: Find the Sliding Window Maximum.

@@ -83,18 +83,91 @@ func (h *MinHeap) Pop() int {
 	return min
 }
 
-// 2. Last Stone Weight
-type MaxHeap []int
+// -----------------------------------------------------------------------------
+// 2. Build a Max Heap from Scratch
+// -----------------------------------------------------------------------------
 
-func (h MaxHeap) Len() int           { return len(h) }
-func (h MaxHeap) Less(i, j int) bool { return h[i] > h[j] }
-func (h MaxHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+// MaxHeap stores the largest value at index 0.
+type MaxHeap struct {
+	data []int
+}
 
-func (h *MaxHeap) Push(x interface{}) {
+// Size returns the number of values in the heap.
+func (h *MaxHeap) Size() int {
+	return len(h.data)
+}
+
+// Peek returns the largest value without removing it.
+func (h *MaxHeap) Peek() int {
+	if len(h.data) == 0 {
+		return 0
+	}
+	return h.data[0]
+}
+
+// Push adds a value while preserving the max-heap property.
+func (h *MaxHeap) Push(value int) {
+	h.data = append(h.data, value)
+
+	child := len(h.data) - 1
+	for child > 0 {
+		parent := (child - 1) / 2
+		if h.data[child] <= h.data[parent] {
+			break
+		}
+		h.data[child], h.data[parent] = h.data[parent], h.data[child]
+
+		child = parent
+	}
+
+}
+
+// Pop removes and returns the largest value.
+func (h *MaxHeap) Pop() int {
+	if len(h.data) == 0 {
+		return 0
+	}
+
+	max := h.data[0]
+	lastIndex := len(h.data) - 1
+	h.data[0] = h.data[lastIndex]
+	h.data = h.data[:lastIndex]
+	parent := 0
+	for {
+		left := parent*2 + 1
+		right := parent*2 + 2
+		if left >= len(h.data) {
+			break
+		}
+		largerChild := left
+
+		if right < len(h.data) && h.data[left] < h.data[right] {
+			largerChild = right
+		}
+
+		if h.data[parent] >= h.data[largerChild] {
+			break
+		}
+
+		h.data[parent], h.data[largerChild] = h.data[largerChild], h.data[parent]
+
+		parent = largerChild
+	}
+	return max
+}
+
+// 3. Last Stone Weight
+type IntMaxHeap []int
+
+func (h IntMaxHeap) Len() int           { return len(h) }
+func (h IntMaxHeap) Less(i, j int) bool { return h[i] > h[j] }
+func (h IntMaxHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+
+func (h *IntMaxHeap) Push(x interface{}) {
 	*h = append(*h, x.(int))
 }
 
-func (h *MaxHeap) Pop() interface{} {
+func (h *IntMaxHeap) Pop() interface{} {
 	old := *h
 	val := old[len(old)-1]
 	*h = old[:len(old)-1]
@@ -102,7 +175,7 @@ func (h *MaxHeap) Pop() interface{} {
 }
 
 func lastStoneWeight(stones []int) int {
-	h := &MaxHeap{}
+	h := &IntMaxHeap{}
 	heap.Init(h)
 
 	for _, s := range stones {
@@ -124,7 +197,7 @@ func lastStoneWeight(stones []int) int {
 	return heap.Pop(h).(int)
 }
 
-// 3. Kth Largest Element in an Array
+// 4. Kth Largest Element in an Array
 type IntMinHeap []int
 
 func (h IntMinHeap) Len() int           { return len(h) }
@@ -155,7 +228,7 @@ func findKthLargest(nums []int, k int) int {
 	return (*h)[0]
 }
 
-// 4. Top K Frequent Elements
+// 5. Top K Frequent Elements
 type Freq struct {
 	val  int
 	freq int
@@ -201,7 +274,7 @@ func topKFrequent(nums []int, k int) []int {
 	return res
 }
 
-// 5. K Closest Numbers to a Target
+// 6. K Closest Numbers to a Target
 type Pair struct {
 	val  int
 	diff int
@@ -244,7 +317,7 @@ func kClosestNumbers(nums []int, k int, target int) []int {
 	return res
 }
 
-// 6. K Closest Points to the Origin
+// 7. K Closest Points to the Origin
 type Point struct {
 	x, y int
 	dist int
@@ -288,7 +361,7 @@ func kClosestPoints(points [][]int, k int) [][]int {
 	return res
 }
 
-// 7. Merge K Sorted Arrays
+// 8. Merge K Sorted Arrays
 type Node struct {
 	val int
 	row int
@@ -338,7 +411,7 @@ func mergeKArrays(arr [][]int) []int {
 	return res
 }
 
-// 8. Merge K Sorted Lists
+// 9. Merge K Sorted Lists
 type ListNode struct {
 	Val  int
 	Next *ListNode
@@ -391,14 +464,14 @@ func mergeKLists(lists []*ListNode) *ListNode {
 // Hard
 // -----------------------------------------------------------------------------
 
-// 9. Task Scheduler
+// 10. Task Scheduler
 func leastInterval(tasks []byte, n int) int {
 	freq := make(map[byte]int)
 	for _, t := range tasks {
 		freq[t]++
 	}
 
-	h := &MaxHeap{}
+	h := &IntMaxHeap{}
 	heap.Init(h)
 
 	for _, v := range freq {
@@ -434,14 +507,14 @@ func leastInterval(tasks []byte, n int) int {
 	return time
 }
 
-// 10. Median from a Data Stream
+// 11. Median from a Data Stream
 type MedianFinder struct {
-	left  *MaxHeap
+	left  *IntMaxHeap
 	right *IntMinHeap
 }
 
 func Constructor() MedianFinder {
-	l := &MaxHeap{}
+	l := &IntMaxHeap{}
 	r := &IntMinHeap{}
 	heap.Init(l)
 	heap.Init(r)
@@ -477,25 +550,38 @@ func abs(x int) int {
 }
 
 func main() {
-	practiceHeap := &MinHeap{}
+	minHeap := &MinHeap{}
 
-	practiceHeap.Push(5)
-	practiceHeap.Push(2)
-	practiceHeap.Push(8)
-	practiceHeap.Push(1)
+	minHeap.Push(5)
+	minHeap.Push(2)
+	minHeap.Push(8)
+	minHeap.Push(1)
 
 	fmt.Println("1. Build a Min Heap from Scratch")
-	fmt.Println("Heap:        ", practiceHeap.data)   // Expected: [1 2 8 5]
-	fmt.Println("Size:        ", practiceHeap.Size()) // Expected: 4
-	fmt.Println("Minimum:     ", practiceHeap.Peek()) // Expected: 1
-	fmt.Println("Removed min: ", practiceHeap.Pop())  // Expected: 1
-	fmt.Println("After pop:   ", practiceHeap.data)   // Expected: [2 5 8]
+	fmt.Println("Heap:        ", minHeap.data)   // Expected: [1 2 8 5]
+	fmt.Println("Size:        ", minHeap.Size()) // Expected: 4
+	fmt.Println("Minimum:     ", minHeap.Peek()) // Expected: 1
+	fmt.Println("Removed min: ", minHeap.Pop())  // Expected: 1
+	fmt.Println("After pop:   ", minHeap.data)   // Expected: [2 5 8]
 
-	fmt.Println("\n2. Last Stone Weight:", lastStoneWeight([]int{2, 7, 4, 1, 8, 1}))
+	maxHeap := &MaxHeap{}
 
-	fmt.Println("3. Kth Largest:", findKthLargest([]int{3, 2, 1, 5, 6, 4}, 2))
-	fmt.Println("4. Top K Frequent:", topKFrequent([]int{1, 1, 1, 2, 2, 3}, 2))
-	fmt.Println("7. Merge K Arrays:", mergeKArrays([][]int{
+	maxHeap.Push(5)
+	maxHeap.Push(2)
+	maxHeap.Push(8)
+	maxHeap.Push(1)
+
+	fmt.Println("\n2. Build a Max Heap from Scratch")
+	fmt.Println("Heap:        ", maxHeap.data)   // Expected: [8 2 5 1]
+	fmt.Println("Size:        ", maxHeap.Size()) // Expected: 4
+	fmt.Println("Maximum:     ", maxHeap.Peek()) // Expected: 8
+	fmt.Println("Removed max: ", maxHeap.Pop())  // Expected: 8
+	fmt.Println("After pop:   ", maxHeap.data)   // Expected: [5 2 1]
+
+	fmt.Println("\n3. Last Stone Weight:", lastStoneWeight([]int{2, 7, 4, 1, 8, 1}))
+	fmt.Println("4. Kth Largest:", findKthLargest([]int{3, 2, 1, 5, 6, 4}, 2))
+	fmt.Println("5. Top K Frequent:", topKFrequent([]int{1, 1, 1, 2, 2, 3}, 2))
+	fmt.Println("8. Merge K Arrays:", mergeKArrays([][]int{
 		{1, 4, 5},
 		{1, 3, 4},
 		{2, 6},

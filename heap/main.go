@@ -209,10 +209,9 @@ func (h *IntMinHeap) Push(x interface{}) {
 }
 
 func (h *IntMinHeap) Pop() interface{} {
-	old := *h
-	val := old[len(old)-1]
-	*h = old[:len(old)-1]
-	return val
+	value := (*h)[len(*h)-1]
+	*h = (*h)[:len(*h)-1]
+	return value
 }
 
 func findKthLargest(nums []int, k int) int {
@@ -245,10 +244,9 @@ func (h *IntMinHeapFreq) Push(x interface{}) {
 }
 
 func (h *IntMinHeapFreq) Pop() interface{} {
-	old := *h
-	val := old[len(old)-1]
-	*h = old[:len(old)-1]
-	return val
+	value := (*h)[len(*h)-1]
+	*h = (*h)[:len(*h)-1]
+	return value
 }
 
 func topKFrequent(nums []int, k int) []int {
@@ -334,10 +332,9 @@ func (h *MaxHeapPoint) Push(x interface{}) {
 }
 
 func (h *MaxHeapPoint) Pop() interface{} {
-	old := *h
-	val := old[len(old)-1]
-	*h = old[:len(old)-1]
-	return val
+	value := (*h)[len(*h)-1]
+	*h = (*h)[:len(*h)-1]
+	return value
 }
 
 func kClosestPoints(points [][]int, k int) [][]int {
@@ -581,9 +578,39 @@ func main() {
 	fmt.Println("\n3. Last Stone Weight:", lastStoneWeight([]int{2, 7, 4, 1, 8, 1}))
 	fmt.Println("4. Kth Largest:", findKthLargest([]int{3, 2, 1, 5, 6, 4}, 2))
 	fmt.Println("5. Top K Frequent:", topKFrequent([]int{1, 1, 1, 2, 2, 3}, 2))
+	fmt.Println("6. K Closest Numbers:", kClosestNumbers([]int{1, 2, 3, 4, 5}, 2, 3))
+	fmt.Println("7. K Closest Points:", kClosestPoints([][]int{
+		{1, 3},
+		{-2, 2},
+		{5, 8},
+	}, 2))
 	fmt.Println("8. Merge K Arrays:", mergeKArrays([][]int{
 		{1, 4, 5},
 		{1, 3, 4},
 		{2, 6},
 	}))
+
+	lists := []*ListNode{
+		{Val: 1, Next: &ListNode{Val: 4, Next: &ListNode{Val: 5}}},
+		{Val: 1, Next: &ListNode{Val: 3, Next: &ListNode{Val: 4}}},
+		{Val: 2, Next: &ListNode{Val: 6}},
+	}
+	mergedList := mergeKLists(lists)
+	fmt.Print("9. Merge K Lists: [")
+	for node := mergedList; node != nil; node = node.Next {
+		if node != mergedList {
+			fmt.Print(" ")
+		}
+		fmt.Print(node.Val)
+	}
+	fmt.Println("]")
+
+	fmt.Println("10. Task Scheduler:", leastInterval([]byte{'A', 'A', 'A', 'B', 'B', 'B'}, 2))
+
+	medianFinder := Constructor()
+	medianFinder.AddNum(1)
+	medianFinder.AddNum(2)
+	fmt.Println("11. Median after [1, 2]:", medianFinder.FindMedian())
+	medianFinder.AddNum(3)
+	fmt.Println("    Median after [1, 2, 3]:", medianFinder.FindMedian())
 }

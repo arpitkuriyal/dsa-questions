@@ -588,8 +588,9 @@ func main() {
 		{1, 4, 5},
 		{1, 3, 4},
 		{2, 6},
-	}))
+	})) // practice
 
+	// practice
 	lists := []*ListNode{
 		{Val: 1, Next: &ListNode{Val: 4, Next: &ListNode{Val: 5}}},
 		{Val: 1, Next: &ListNode{Val: 3, Next: &ListNode{Val: 4}}},
@@ -605,12 +606,12 @@ func main() {
 	}
 	fmt.Println("]")
 
-	fmt.Println("10. Task Scheduler:", leastInterval([]byte{'A', 'A', 'A', 'B', 'B', 'B'}, 2))
+	fmt.Println("10. Task Scheduler:", leastInterval([]byte{'A', 'A', 'A', 'B', 'B', 'B'}, 2)) //hard
 
 	medianFinder := Constructor()
 	medianFinder.AddNum(1)
 	medianFinder.AddNum(2)
 	fmt.Println("11. Median after [1, 2]:", medianFinder.FindMedian())
 	medianFinder.AddNum(3)
-	fmt.Println("    Median after [1, 2, 3]:", medianFinder.FindMedian())
+	fmt.Println("    Median after [1, 2, 3]:", medianFinder.FindMedian()) //hard
 }

@@ -33,7 +33,7 @@ func canJump(nums []int) bool {
 // 3. Jump Game II (Min jumps to reach end)
 func jump(nums []int) int {
 	jumps := 0    // How many jumps we've taken.
-	end := 0      // How many jumps we've taken.
+	end := 0      // How many jumps we've taken. (boundary reachable with the current number of jumps)
 	farthest := 0 // While scanning the current range, what's the farthest place I can reach with the next jump?
 
 	for i := 0; i < len(nums)-1; i++ {

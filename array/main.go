@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"slices"
 	"sort"
+	"strconv"
+	"strings"
 )
 
 // Contains Duplicate
@@ -70,7 +72,7 @@ func twoSum(nums []int, target int) []int {
 	return nil
 }
 
-// Group Anagrams
+// Group Anagrams O(n * k log k)
 func groupAnagrams(strs []string) [][]string {
 	m := make(map[string][]string)
 	for _, s := range strs {
@@ -84,6 +86,32 @@ func groupAnagrams(strs []string) [][]string {
 		res = append(res, v)
 	}
 	return res
+}
+
+// optimal O(n*k)
+func fastgroupAnagrams(strs []string) [][]string {
+	groups := make(map[[26]int][]string)
+
+	for _, word := range strs {
+		// A new empty count array for every word
+		var count [26]int
+
+		for _, ch := range word {
+			count[ch-'a']++
+		}
+
+		// Go checks whether this exact array key
+		// already exists in the map.
+		groups[count] = append(groups[count], word)
+	}
+
+	var result [][]string
+
+	for _, group := range groups {
+		result = append(result, group)
+	}
+
+	return result
 }
 
 // Top K Frequent Elements
@@ -107,11 +135,15 @@ func topKFrequent(nums []int, k int) []int {
 
 // Encode & Decode Strings (simple join)
 func encode(strs []string) string {
-	res := ""
-	for _, s := range strs {
-		res += fmt.Sprintf("%d#%s", len(s), s)
+	var encoded strings.Builder
+
+	for _, word := range strs {
+		encoded.WriteString(strconv.Itoa(len(word)))
+		encoded.WriteByte('#')
+		encoded.WriteString(word)
 	}
-	return res
+
+	return encoded.String()
 }
 
 func decode(s string) []string {
@@ -311,7 +343,7 @@ func characterReplacement(s string, k int) int {
 	return res
 }
 
-// Subarray Sum Equals K
+// Subarray Sum Equals K // tricky hard
 func subarraySum(nums []int, k int) int {
 	count := 0
 	prefixSum := 0
@@ -365,20 +397,6 @@ func maxSubArrayProduct(nums []int) int {
 	}
 
 	return answer
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }
 
 // Min Size Subarray Sum (Window)
@@ -560,12 +578,12 @@ func main() {
 	fmt.Println("Contains Duplicate:", containsDuplicate([]int{1, 2, 3, 1}))
 	fmt.Println("Valid Anagram:", isAnagram("anagram", "nagaram"))
 	fmt.Println("Two Sum:", twoSum([]int{2, 7, 11, 15}, 9))
-	fmt.Println("Group Anagrams:", groupAnagrams([]string{"eat", "tea", "tan", "ate"}))
-	fmt.Println("Top K Frequent:", topKFrequent([]int{1, 1, 1, 2, 2, 3}, 2))
+	fmt.Println("Group Anagrams:", groupAnagrams([]string{"eat", "tea", "tan", "ate"})) // hard
+	fmt.Println("Top K Frequent:", topKFrequent([]int{1, 1, 1, 2, 2, 3}, 2))            // hard
 
 	encoded := encode([]string{"hello", "world"})
 	fmt.Println("Encoded:", encoded)
-	fmt.Println("Decoded:", decode(encoded))
+	fmt.Println("Decoded:", decode(encoded)) // revision
 
 	fmt.Println("Product Except Self:", productExceptSelf([]int{1, 2, 3, 4}))
 	fmt.Println("Longest Consecutive:", longestConsecutive([]int{100, 4, 200, 1, 3, 2}))
@@ -576,9 +594,9 @@ func main() {
 
 	fmt.Println("Max Profit:", maxProfit([]int{7, 1, 5, 3, 6, 4}))
 	fmt.Println("Longest Substring:", lengthOfLongestSubstring("abcabcbb"))
-	fmt.Println("Character Replacement:", characterReplacement("AABABBA", 1))
+	fmt.Println("Character Replacement:", characterReplacement("AABABBA", 1)) // hard
 
-	fmt.Println("Subarray Sum =", subarraySum([]int{1, 1, 1}, 2))
+	fmt.Println("Subarray Sum =", subarraySum([]int{1, 1, 1}, 2)) // revision
 	fmt.Println("Kadane =", maxSubArray([]int{-2, 1, -3, 4, -1, 2, 1, -5, 4}))
 
 	fmt.Println("Min Subarray Length =", minSubArrayLen(7, []int{2, 3, 1, 2, 4, 3}))
@@ -598,15 +616,15 @@ func main() {
 	fmt.Println("Gas Station =", canCompleteCircuit(
 		[]int{1, 2, 3, 4, 5},
 		[]int{3, 4, 5, 1, 2},
-	))
+	)) // revision
 
 	fmt.Println("Merge Intervals =", merge([][]int{
 		{1, 3}, {2, 6}, {8, 10}, {15, 18},
-	}))
+	})) // hard
 
 	fmt.Println("Car Fleet =", carFleet(
 		12,
 		[]int{10, 8, 0, 5, 3},
 		[]int{2, 4, 1, 1, 3},
-	))
+	)) // revision
 }

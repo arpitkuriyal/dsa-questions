@@ -17,13 +17,17 @@ type ListNode struct {
 
 // Basic question: Build a list from values. O(n) time, O(n) new nodes.
 func buildList(values ...int) *ListNode {
-	dummy := &ListNode{} // A temporary node before the real head.
-	tail := dummy
+	var head, tail *ListNode
 	for _, value := range values {
-		tail.Next = &ListNode{Val: value}
-		tail = tail.Next
+		node := &ListNode{Val: value}
+		if head == nil {
+			head = node // The first node becomes the head.
+		} else {
+			tail.Next = node
+		}
+		tail = node
 	}
-	return dummy.Next
+	return head
 }
 
 // Basic question: Traverse a list and collect its values for printing.
@@ -72,9 +76,14 @@ func insertAt(head *ListNode, index, value int) *ListNode {
 	if index < 0 {
 		return head
 	}
-	dummy := &ListNode{Next: head}
-	previous := dummy
-	for i := 0; i < index; i++ {
+	if index == 0 {
+		return insertFront(head, value)
+	}
+	if head == nil {
+		return head
+	}
+	previous := head
+	for i := 0; i < index-1; i++ {
 		if previous.Next == nil {
 			return head
 		}
@@ -82,18 +91,20 @@ func insertAt(head *ListNode, index, value int) *ListNode {
 	}
 	// Connect the new node to the rest BEFORE changing the previous node's link.
 	previous.Next = &ListNode{Val: value, Next: previous.Next}
-	return dummy.Next
+	return head
 }
 
 // Basic question: Delete at a zero-based index, including the head or tail.
 // Invalid indices leave the list unchanged. O(n) time, O(1) extra space.
 func deleteAt(head *ListNode, index int) *ListNode {
-	if index < 0 {
+	if index < 0 || head == nil {
 		return head
 	}
-	dummy := &ListNode{Next: head}
-	previous := dummy
-	for i := 0; i < index; i++ {
+	if index == 0 {
+		return head.Next // Deleting the head changes where the list starts.
+	}
+	previous := head
+	for i := 0; i < index-1; i++ {
 		if previous.Next == nil {
 			return head
 		}
@@ -102,14 +113,19 @@ func deleteAt(head *ListNode, index int) *ListNode {
 	if previous.Next != nil {
 		previous.Next = previous.Next.Next // Bypass the node being deleted.
 	}
-	return dummy.Next
+	return head
 }
 
 // Basic question: Delete the FIRST node with a given value.
 // A missing value leaves the list unchanged. O(n) time, O(1) extra space.
 func deleteValue(head *ListNode, value int) *ListNode {
-	dummy := &ListNode{Next: head}
-	previous := dummy
+	if head == nil {
+		return nil
+	}
+	if head.Val == value {
+		return head.Next
+	}
+	previous := head
 	for previous.Next != nil {
 		if previous.Next.Val == value {
 			previous.Next = previous.Next.Next
@@ -117,7 +133,7 @@ func deleteValue(head *ListNode, value int) *ListNode {
 		}
 		previous = previous.Next
 	}
-	return dummy.Next
+	return head
 }
 
 // 1. 876. Middle of the Linked List — Easy
@@ -165,8 +181,22 @@ func reverseListRecursive(head *ListNode) *ListNode {
 // https://leetcode.com/problems/merge-two-sorted-lists/
 // Reuses input nodes. O(m+n) time, O(1) extra space.
 func mergeTwoLists(list1, list2 *ListNode) *ListNode {
-	dummy := &ListNode{}
-	tail := dummy
+	if list1 == nil {
+		return list2
+	}
+	if list2 == nil {
+		return list1
+	}
+	// Choose the first node, then attach the remaining nodes after it.
+	var head *ListNode
+	if list1.Val <= list2.Val {
+		head = list1
+		list1 = list1.Next
+	} else {
+		head = list2
+		list2 = list2.Next
+	}
+	tail := head
 	for list1 != nil && list2 != nil {
 		if list1.Val <= list2.Val {
 			tail.Next = list1
@@ -182,7 +212,7 @@ func mergeTwoLists(list1, list2 *ListNode) *ListNode {
 	} else {
 		tail.Next = list2
 	}
-	return dummy.Next
+	return head
 }
 
 // 4. 141. Linked List Cycle — Easy
@@ -255,25 +285,28 @@ func isPalindrome(head *ListNode) bool {
 // 7. 19. Remove Nth Node From End — Medium
 // Remove the nth node counting from the end (n=1 removes the tail).
 // https://leetcode.com/problems/remove-nth-node-from-end-of-list/
-// Keep fast n nodes ahead; slow finishes just before the node to remove.
+// Move fast n steps first. Handle removing the head, then move both pointers.
 // Invalid n leaves the list unchanged. O(length) time, O(1) space.
 func removeNthFromEnd(head *ListNode, n int) *ListNode {
-	if n <= 0 {
+	if n <= 0 || head == nil {
 		return head
 	}
-	dummy := &ListNode{Next: head}
-	slow, fast := dummy, dummy
+	slow, fast := head, head
 	for i := 0; i < n; i++ {
-		fast = fast.Next
 		if fast == nil {
 			return head
 		}
+		fast = fast.Next
 	}
+	if fast == nil {
+		return head.Next // n equals the length, so remove the head.
+	}
+	// Stop with slow just before the node to remove.
 	for fast.Next != nil {
 		slow, fast = slow.Next, fast.Next
 	}
 	slow.Next = slow.Next.Next
-	return dummy.Next
+	return head
 }
 
 // 8. 24. Swap Nodes in Pairs — Medium
@@ -281,8 +314,18 @@ func removeNthFromEnd(head *ListNode, n int) *ListNode {
 // https://leetcode.com/problems/swap-nodes-in-pairs/
 // O(n) time, O(1) space.
 func swapPairs(head *ListNode) *ListNode {
-	dummy := &ListNode{Next: head}
-	previous := dummy
+	if head == nil || head.Next == nil {
+		return head
+	}
+	// Swap the first pair and update the head explicitly.
+	first := head
+	second := head.Next
+	first.Next = second.Next
+	second.Next = first
+	head = second
+	previous := first
+
+	// The remaining pairs have a previous node to reconnect.
 	for previous.Next != nil && previous.Next.Next != nil {
 		first := previous.Next
 		second := first.Next
@@ -292,7 +335,7 @@ func swapPairs(head *ListNode) *ListNode {
 		previous.Next = second
 		previous = first
 	}
-	return dummy.Next
+	return head
 }
 
 // 9. 328. Odd Even Linked List — Medium
@@ -322,8 +365,8 @@ func oddEvenList(head *ListNode) *ListNode {
 // https://leetcode.com/problems/add-two-numbers/
 // O(max(m,n)) time and output space; O(1) auxiliary space.
 func addTwoNumbers(list1, list2 *ListNode) *ListNode {
-	dummy := &ListNode{}
-	tail, carry := dummy, 0
+	var head, tail *ListNode
+	carry := 0
 	for list1 != nil || list2 != nil || carry != 0 {
 		sum := carry
 		if list1 != nil {
@@ -334,11 +377,16 @@ func addTwoNumbers(list1, list2 *ListNode) *ListNode {
 			sum += list2.Val
 			list2 = list2.Next
 		}
-		tail.Next = &ListNode{Val: sum % 10}
-		tail = tail.Next
+		node := &ListNode{Val: sum % 10}
+		if head == nil {
+			head = node // The first result digit becomes the head.
+		} else {
+			tail.Next = node
+		}
+		tail = node
 		carry = sum / 10
 	}
-	return dummy.Next
+	return head
 }
 
 func main() {

@@ -154,8 +154,7 @@ func decode(s string) []string {
 		for s[j] != '#' {
 			j++
 		}
-		var length int
-		fmt.Sscanf(s[i:j], "%d", &length)
+		length, _ := strconv.Atoi(s[i:j])
 		j++
 		res = append(res, s[j:j+length])
 		i = j + length
@@ -325,38 +324,47 @@ func lengthOfLongestSubstring(s string) int {
 
 // Longest Repeating Character Replacement
 func characterReplacement(s string, k int) int {
-	count := make(map[byte]int)
-	l := 0
-	maxCount := 0
-	res := 0
+	count := [26]int{}
+	left := 0
+	longest := 0
+	mostCommon := 0
+	for right := 0; right < len(s); right++ {
+		letter := s[right] - 'A'
+		count[letter]++
 
-	for r := 0; r < len(s); r++ {
-		count[s[r]]++
-		maxCount = max(maxCount, count[s[r]])
-
-		if (r-l+1)-maxCount > k {
-			count[s[l]]--
-			l++
+		if count[letter] > mostCommon {
+			mostCommon = count[letter]
 		}
-		res = max(res, r-l+1)
+
+		windowLength := right - left + 1
+		replacementsNeeded := windowLength - mostCommon
+
+		if replacementsNeeded > k {
+			leftLetter := s[left] - 'A'
+			count[leftLetter]--
+			left++
+		}
+
+		windowLength = right - left + 1
+		if windowLength > longest {
+			longest = windowLength
+		}
 	}
-	return res
+	return longest
 }
 
 // Subarray Sum Equals K // tricky hard
 func subarraySum(nums []int, k int) int {
-	count := 0
-	prefixSum := 0
-	m := map[int]int{0: 1}
-
-	for _, n := range nums {
-		prefixSum += n
-		if val, ok := m[prefixSum-k]; ok {
-			count += val
-		}
-		m[prefixSum]++
+	seen := map[int]int{0: 1}
+	prefix := 0
+	ans := 0
+	for i := 0; i < len(nums); i++ {
+		prefix = prefix + nums[i]
+		needed := prefix - k
+		ans += seen[needed] // Add the number of matching earlier prefixes.
+		seen[prefix]++      // Record the current prefix.
 	}
-	return count
+	return ans
 }
 
 // Kadane (Max Subarray)
@@ -488,13 +496,14 @@ func sortColors(nums []int) {
 	low, mid := 0, 0
 	high := len(nums) - 1
 	for mid <= high {
-		if nums[mid] == 0 {
+		switch nums[mid] {
+		case 0:
 			nums[low], nums[mid] = nums[mid], nums[low]
 			low++
 			mid++
-		} else if nums[mid] == 1 {
+		case 1:
 			mid++
-		} else {
+		default:
 			nums[mid], nums[high] = nums[high], nums[mid]
 			high--
 		}

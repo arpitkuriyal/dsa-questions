@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 // simple binary search
 func binarySearch(arr []int, target int) bool {
 	left, right := 0, len(arr)-1
@@ -190,4 +192,10 @@ func findMin(arr []int) int {
 	}
 
 	return arr[left]
+}
+
+func main() {
+	arr := []int{1, 3, 5, 7, 9, 11}
+	target := 7
+	fmt.Println("Binary search:", binarySearch(arr, target))
 }

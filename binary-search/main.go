@@ -198,4 +198,12 @@ func main() {
 	arr := []int{1, 3, 5, 7, 9, 11}
 	target := 7
 	fmt.Println("Binary search:", binarySearch(arr, target))
+	fmt.Println("Lower bound:", lowerBound(arr, target))
+	fmt.Println("Upper bound:", upperBound(arr, target))
+	fmt.Println("Search insert position:", searchInsertPos(arr, 8))
+
+	duplicates := []int{1, 2, 2, 2, 4, 6}
+	fmt.Println("First occurrence:", firstOccurance(duplicates, 2))
+	fmt.Println("Last occurrence:", lastOccurance(duplicates, 2))
+	fmt.Println("Count of target:", CountElement(duplicates, 2))
 }

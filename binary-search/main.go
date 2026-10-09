@@ -206,4 +206,11 @@ func main() {
 	fmt.Println("First occurrence:", firstOccurance(duplicates, 2))
 	fmt.Println("Last occurrence:", lastOccurance(duplicates, 2))
 	fmt.Println("Count of target:", CountElement(duplicates, 2))
+
+	floor, ceil := floorAndCeil(arr, 8)
+	fmt.Println("Floor and ceil:", floor, ceil)
+
+	rotated := []int{7, 9, 11, 1, 3, 5}
+	fmt.Println("Target index in rotated array:", searchRotated(rotated, 3))
+	fmt.Println("Minimum in rotated array:", findMin(rotated))
 }

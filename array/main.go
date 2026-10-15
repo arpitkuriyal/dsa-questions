@@ -582,6 +582,29 @@ func carFleet(target int, position []int, speed []int) int {
 	return fleets
 }
 
+// Permutation in String
+func checkInclusion(s1, s2 string) bool {
+	if len(s1) > len(s2) {
+		return false
+	}
+	var need, window [26]int
+	for i := 0; i < len(s1); i++ {
+		need[s1[i]-'a']++
+		window[s2[i]-'a']++
+	}
+	if need == window {
+		return true
+	}
+	for right := len(s1); right < len(s2); right++ {
+		window[s2[right]-'a']++
+		window[s2[right-len(s1)]-'a']--
+		if need == window {
+			return true
+		}
+	}
+	return false
+}
+
 func main() {
 
 	fmt.Println("Contains Duplicate:", containsDuplicate([]int{1, 2, 3, 1}))
@@ -636,4 +659,6 @@ func main() {
 		[]int{10, 8, 0, 5, 3},
 		[]int{2, 4, 1, 1, 3},
 	)) // revision
+	fmt.Println("Permutation in String =", checkInclusion("ab", "eidbaooo"))
+
 }

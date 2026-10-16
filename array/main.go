@@ -605,6 +605,39 @@ func checkInclusion(s1, s2 string) bool {
 	return false
 }
 
+// Minimum Window Substring
+func minWindow(s, t string) string {
+	if len(t) == 0 || len(t) > len(s) {
+		return ""
+	}
+	var need [128]int
+	for i := 0; i < len(t); i++ {
+		need[t[i]]++
+	}
+	left, missing := 0, len(t)
+	bestStart, bestLength := 0, len(s)+1
+	for right := 0; right < len(s); right++ {
+		if need[s[right]] > 0 {
+			missing--
+		}
+		need[s[right]]--
+		for missing == 0 {
+			if length := right - left + 1; length < bestLength {
+				bestStart, bestLength = left, length
+			}
+			need[s[left]]++
+			if need[s[left]] > 0 {
+				missing++
+			}
+			left++
+		}
+	}
+	if bestLength == len(s)+1 {
+		return ""
+	}
+	return s[bestStart : bestStart+bestLength]
+}
+
 func main() {
 
 	fmt.Println("Contains Duplicate:", containsDuplicate([]int{1, 2, 3, 1}))
@@ -660,5 +693,6 @@ func main() {
 		[]int{2, 4, 1, 1, 3},
 	)) // revision
 	fmt.Println("Permutation in String =", checkInclusion("ab", "eidbaooo"))
+	fmt.Println("Minimum Window Substring =", minWindow("ADOBECODEBANC", "ABC"))
 
 }

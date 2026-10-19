@@ -638,6 +638,21 @@ func minWindow(s, t string) string {
 	return s[bestStart : bestStart+bestLength]
 }
 
+// Find the Duplicate Number (Floyd's cycle detection)
+func findDuplicate(nums []int) int {
+	slow, fast := nums[0], nums[nums[0]]
+	for slow != fast {
+		slow = nums[slow]
+		fast = nums[nums[fast]]
+	}
+	slow = 0
+	for slow != fast {
+		slow = nums[slow]
+		fast = nums[fast]
+	}
+	return slow
+}
+
 func main() {
 
 	fmt.Println("Contains Duplicate:", containsDuplicate([]int{1, 2, 3, 1}))
@@ -694,5 +709,6 @@ func main() {
 	)) // revision
 	fmt.Println("Permutation in String =", checkInclusion("ab", "eidbaooo"))
 	fmt.Println("Minimum Window Substring =", minWindow("ADOBECODEBANC", "ABC"))
+	fmt.Println("Find Duplicate Number =", findDuplicate([]int{1, 3, 4, 2, 2}))
 
 }

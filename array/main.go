@@ -653,6 +653,39 @@ func findDuplicate(nums []int) int {
 	return slow
 }
 
+// Spiral Matrix
+func spiralOrder(matrix [][]int) []int {
+	if len(matrix) == 0 || len(matrix[0]) == 0 {
+		return []int{}
+	}
+	top, bottom := 0, len(matrix)-1
+	left, right := 0, len(matrix[0])-1
+	result := make([]int, 0, len(matrix)*len(matrix[0]))
+	for top <= bottom && left <= right {
+		for col := left; col <= right; col++ {
+			result = append(result, matrix[top][col])
+		}
+		top++
+		for row := top; row <= bottom; row++ {
+			result = append(result, matrix[row][right])
+		}
+		right--
+		if top <= bottom {
+			for col := right; col >= left; col-- {
+				result = append(result, matrix[bottom][col])
+			}
+			bottom--
+		}
+		if left <= right {
+			for row := bottom; row >= top; row-- {
+				result = append(result, matrix[row][left])
+			}
+			left++
+		}
+	}
+	return result
+}
+
 func main() {
 
 	fmt.Println("Contains Duplicate:", containsDuplicate([]int{1, 2, 3, 1}))
@@ -710,5 +743,6 @@ func main() {
 	fmt.Println("Permutation in String =", checkInclusion("ab", "eidbaooo"))
 	fmt.Println("Minimum Window Substring =", minWindow("ADOBECODEBANC", "ABC"))
 	fmt.Println("Find Duplicate Number =", findDuplicate([]int{1, 3, 4, 2, 2}))
+	fmt.Println("Spiral Matrix =", spiralOrder([][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}))
 
 }

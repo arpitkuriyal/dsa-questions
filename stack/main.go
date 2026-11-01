@@ -265,11 +265,11 @@ func main() {
 	for _, price := range prices {
 		spans = append(spans, spanner.next(price))
 	}
-	fmt.Println("Stock span:", spans)
+	fmt.Println("Stock span:", spans) // tricky
 
 	// Question 8: Car Fleet.
-	fmt.Println("Car fleet:", carFleet(12, []int{10, 8, 0, 5, 3}, []int{2, 4, 1, 1, 3}))
+	fmt.Println("Car fleet:", carFleet(12, []int{10, 8, 0, 5, 3}, []int{2, 4, 1, 1, 3})) // tricky
 
 	// Question 9: Largest Rectangle in Histogram.
-	fmt.Println("Largest rectangle:", largestRectangleArea([]int{2, 1, 5, 6, 2, 3}))
+	fmt.Println("Largest rectangle:", largestRectangleArea([]int{2, 1, 5, 6, 2, 3})) // tricky
 }

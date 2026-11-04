@@ -2,10 +2,7 @@ package main
 
 import (
 	"fmt"
-	"slices"
 	"sort"
-	"strconv"
-	"strings"
 )
 
 // Contains Duplicate
@@ -20,46 +17,6 @@ func containsDuplicate(nums []int) bool {
 	return false
 }
 
-// Valid Anagram
-func isAnagram(s, t string) bool {
-	if len(s) != len(t) {
-		return false
-	}
-	count := make(map[rune]int)
-	for _, ch := range s {
-		count[ch]++
-	}
-	for _, ch := range t {
-		count[ch]--
-		if count[ch] < 0 {
-			return false
-		}
-	}
-	return true
-}
-
-// valid anagram solution 2 with space complexity 0 but worked with lower case character
-func validAnagram2(s, t string) bool {
-	if len(s) != len(t) {
-		return false
-	}
-
-	var count [26]int
-
-	for i := 0; i < len(s); i++ {
-		count[s[i]-'a']++
-		count[t[i]-'a']--
-	}
-
-	for _, c := range count {
-		if c != 0 {
-			return false
-		}
-	}
-
-	return true
-}
-
 // Two Sum
 func twoSum(nums []int, target int) []int {
 	m := make(map[int]int)
@@ -70,96 +27,6 @@ func twoSum(nums []int, target int) []int {
 		m[n] = i
 	}
 	return nil
-}
-
-// Group Anagrams O(n * k log k)
-func groupAnagrams(strs []string) [][]string {
-	m := make(map[string][]string)
-	for _, s := range strs {
-		arr := []rune(s)
-		slices.Sort(arr)
-		key := string(arr)
-		m[key] = append(m[key], s)
-	}
-	res := [][]string{}
-	for _, v := range m {
-		res = append(res, v)
-	}
-	return res
-}
-
-// optimal O(n*k)
-func fastgroupAnagrams(strs []string) [][]string {
-	groups := make(map[[26]int][]string)
-
-	for _, word := range strs {
-		// A new empty count array for every word
-		var count [26]int
-
-		for _, ch := range word {
-			count[ch-'a']++
-		}
-
-		// Go checks whether this exact array key
-		// already exists in the map.
-		groups[count] = append(groups[count], word)
-	}
-
-	var result [][]string
-
-	for _, group := range groups {
-		result = append(result, group)
-	}
-
-	return result
-}
-
-// Top K Frequent Elements
-func topKFrequent(nums []int, k int) []int {
-	count := make(map[int]int)
-	for _, n := range nums {
-		count[n]++
-	}
-
-	buckets := make([][]int, len(nums)+1)
-	for num, freq := range count {
-		buckets[freq] = append(buckets[freq], num)
-	}
-
-	res := []int{}
-	for i := len(buckets) - 1; i >= 0 && len(res) < k; i-- {
-		res = append(res, buckets[i]...)
-	}
-	return res[:k]
-}
-
-// Encode & Decode Strings (simple join)
-func encode(strs []string) string {
-	var encoded strings.Builder
-
-	for _, word := range strs {
-		encoded.WriteString(strconv.Itoa(len(word)))
-		encoded.WriteByte('#')
-		encoded.WriteString(word)
-	}
-
-	return encoded.String()
-}
-
-func decode(s string) []string {
-	res := []string{}
-	i := 0
-	for i < len(s) {
-		j := i
-		for s[j] != '#' {
-			j++
-		}
-		length, _ := strconv.Atoi(s[i:j])
-		j++
-		res = append(res, s[j:j+length])
-		i = j + length
-	}
-	return res
 }
 
 // Product Except Self
@@ -201,40 +68,6 @@ func longestConsecutive(nums []int) int {
 		}
 	}
 	return longest
-}
-
-// Valid Palindrome
-func isPalindrome(s string) bool {
-	l, r := 0, len(s)-1
-	for l < r {
-		if !isAlnum(s[l]) {
-			l++
-			continue
-		}
-		if !isAlnum(s[r]) {
-			r--
-			continue
-		}
-		if toLower(s[l]) != toLower(s[r]) {
-			return false
-		}
-		l++
-		r--
-	}
-	return true
-}
-
-func isAlnum(c byte) bool {
-	return (c >= 'a' && c <= 'z') ||
-		(c >= 'A' && c <= 'Z') ||
-		(c >= '0' && c <= '9')
-}
-
-func toLower(c byte) byte {
-	if c >= 'A' && c <= 'Z' {
-		return c + 32
-	}
-	return c
 }
 
 // 3Sum
@@ -303,68 +136,6 @@ func maxProfit(prices []int) int {
 		}
 	}
 	return maxProfit
-}
-
-// Longest Substring Without Repeating Characters
-func lengthOfLongestSubstring(s string) int {
-	set := make(map[byte]bool)
-	l := 0
-	maxLen := 0
-
-	for r := 0; r < len(s); r++ {
-		for set[s[r]] {
-			delete(set, s[l])
-			l++
-		}
-		set[s[r]] = true
-		maxLen = max(maxLen, r-l+1)
-	}
-	return maxLen
-}
-
-// Longest Repeating Character Replacement
-func characterReplacement(s string, k int) int {
-	count := [26]int{}
-	left := 0
-	longest := 0
-	mostCommon := 0
-	for right := 0; right < len(s); right++ {
-		letter := s[right] - 'A'
-		count[letter]++
-
-		if count[letter] > mostCommon {
-			mostCommon = count[letter]
-		}
-
-		windowLength := right - left + 1
-		replacementsNeeded := windowLength - mostCommon
-
-		if replacementsNeeded > k {
-			leftLetter := s[left] - 'A'
-			count[leftLetter]--
-			left++
-		}
-
-		windowLength = right - left + 1
-		if windowLength > longest {
-			longest = windowLength
-		}
-	}
-	return longest
-}
-
-// Subarray Sum Equals K // tricky hard
-func subarraySum(nums []int, k int) int {
-	seen := map[int]int{0: 1}
-	prefix := 0
-	ans := 0
-	for i := 0; i < len(nums); i++ {
-		prefix = prefix + nums[i]
-		needed := prefix - k
-		ans += seen[needed] // Add the number of matching earlier prefixes.
-		seen[prefix]++      // Record the current prefix.
-	}
-	return ans
 }
 
 // Kadane (Max Subarray)
@@ -531,26 +302,6 @@ func canCompleteCircuit(gas []int, cost []int) int {
 	return start
 }
 
-// Merge Intervals
-func merge(intervals [][]int) [][]int {
-	sort.Slice(intervals, func(i, j int) bool {
-		return intervals[i][0] < intervals[j][0]
-	})
-
-	res := [][]int{intervals[0]}
-
-	for _, curr := range intervals[1:] {
-		last := res[len(res)-1]
-
-		if curr[0] <= last[1] {
-			last[1] = max(last[1], curr[1])
-		} else {
-			res = append(res, curr)
-		}
-	}
-	return res
-}
-
 // Car Fleet
 type Car struct {
 	pos  int
@@ -580,62 +331,6 @@ func carFleet(target int, position []int, speed []int) int {
 		}
 	}
 	return fleets
-}
-
-// Permutation in String
-func checkInclusion(s1, s2 string) bool {
-	if len(s1) > len(s2) {
-		return false
-	}
-	var need, window [26]int
-	for i := 0; i < len(s1); i++ {
-		need[s1[i]-'a']++
-		window[s2[i]-'a']++
-	}
-	if need == window {
-		return true
-	}
-	for right := len(s1); right < len(s2); right++ {
-		window[s2[right]-'a']++
-		window[s2[right-len(s1)]-'a']--
-		if need == window {
-			return true
-		}
-	}
-	return false
-}
-
-// Minimum Window Substring
-func minWindow(s, t string) string {
-	if len(t) == 0 || len(t) > len(s) {
-		return ""
-	}
-	var need [128]int
-	for i := 0; i < len(t); i++ {
-		need[t[i]]++
-	}
-	left, missing := 0, len(t)
-	bestStart, bestLength := 0, len(s)+1
-	for right := 0; right < len(s); right++ {
-		if need[s[right]] > 0 {
-			missing--
-		}
-		need[s[right]]--
-		for missing == 0 {
-			if length := right - left + 1; length < bestLength {
-				bestStart, bestLength = left, length
-			}
-			need[s[left]]++
-			if need[s[left]] > 0 {
-				missing++
-			}
-			left++
-		}
-	}
-	if bestLength == len(s)+1 {
-		return ""
-	}
-	return s[bestStart : bestStart+bestLength]
 }
 
 // Find the Duplicate Number (Floyd's cycle detection)
@@ -689,24 +384,18 @@ func spiralOrder(matrix [][]int) []int {
 func main() {
 
 	fmt.Println("Contains Duplicate:", containsDuplicate([]int{1, 2, 3, 1}))
-	fmt.Println("Valid Anagram:", isAnagram("anagram", "nagaram"))
 	fmt.Println("Two Sum:", twoSum([]int{2, 7, 11, 15}, 9))
 	fmt.Println("Group Anagrams:", groupAnagrams([]string{"eat", "tea", "tan", "ate"})) // hard
 	fmt.Println("Top K Frequent:", topKFrequent([]int{1, 1, 1, 2, 2, 3}, 2))            // hard
 
-	encoded := encode([]string{"hello", "world"})
-	fmt.Println("Encoded:", encoded)
-	fmt.Println("Decoded:", decode(encoded)) // revision
-
 	fmt.Println("Product Except Self:", productExceptSelf([]int{1, 2, 3, 4}))
 	fmt.Println("Longest Consecutive:", longestConsecutive([]int{100, 4, 200, 1, 3, 2}))
 
-	fmt.Println("Valid Palindrome:", isPalindrome("A man, a plan, a canal: Panama"))
 	fmt.Println("3Sum:", threeSum([]int{-1, 0, 1, 2, -1, -4}))
 	fmt.Println("Max Area:", maxArea([]int{1, 8, 6, 2, 5, 4, 8, 3, 7}))
 
 	fmt.Println("Max Profit:", maxProfit([]int{7, 1, 5, 3, 6, 4}))
-	fmt.Println("Longest Substring:", lengthOfLongestSubstring("abcabcbb"))
+
 	fmt.Println("Character Replacement:", characterReplacement("AABABBA", 1)) // hard
 
 	fmt.Println("Subarray Sum =", subarraySum([]int{1, 1, 1}, 2)) // revision
@@ -740,8 +429,6 @@ func main() {
 		[]int{10, 8, 0, 5, 3},
 		[]int{2, 4, 1, 1, 3},
 	)) // revision
-	fmt.Println("Permutation in String =", checkInclusion("ab", "eidbaooo"))
-	fmt.Println("Minimum Window Substring =", minWindow("ADOBECODEBANC", "ABC"))
 	fmt.Println("Find Duplicate Number =", findDuplicate([]int{1, 3, 4, 2, 2}))
 	fmt.Println("Spiral Matrix =", spiralOrder([][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}))
 

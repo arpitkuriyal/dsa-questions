@@ -385,8 +385,7 @@ func main() {
 
 	fmt.Println("Contains Duplicate:", containsDuplicate([]int{1, 2, 3, 1}))
 	fmt.Println("Two Sum:", twoSum([]int{2, 7, 11, 15}, 9))
-	fmt.Println("Group Anagrams:", groupAnagrams([]string{"eat", "tea", "tan", "ate"})) // hard
-	fmt.Println("Top K Frequent:", topKFrequent([]int{1, 1, 1, 2, 2, 3}, 2))            // hard
+	runHardExamples()
 
 	fmt.Println("Product Except Self:", productExceptSelf([]int{1, 2, 3, 4}))
 	fmt.Println("Longest Consecutive:", longestConsecutive([]int{100, 4, 200, 1, 3, 2}))
@@ -396,9 +395,6 @@ func main() {
 
 	fmt.Println("Max Profit:", maxProfit([]int{7, 1, 5, 3, 6, 4}))
 
-	fmt.Println("Character Replacement:", characterReplacement("AABABBA", 1)) // hard
-
-	fmt.Println("Subarray Sum =", subarraySum([]int{1, 1, 1}, 2)) // revision
 	fmt.Println("Kadane =", maxSubArray([]int{-2, 1, -3, 4, -1, 2, 1, -5, 4}))
 
 	fmt.Println("Min Subarray Length =", minSubArrayLen(7, []int{2, 3, 1, 2, 4, 3}))
@@ -419,10 +415,6 @@ func main() {
 		[]int{1, 2, 3, 4, 5},
 		[]int{3, 4, 5, 1, 2},
 	)) // revision
-
-	fmt.Println("Merge Intervals =", merge([][]int{
-		{1, 3}, {2, 6}, {8, 10}, {15, 18},
-	})) // hard
 
 	fmt.Println("Car Fleet =", carFleet(
 		12,

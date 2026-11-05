@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"slices"
 	"sort"
 )
@@ -129,4 +130,12 @@ func merge(intervals [][]int) [][]int {
 		}
 	}
 	return res
+}
+
+func runHardExamples() {
+	fmt.Println("Group Anagrams:", groupAnagrams([]string{"eat", "tea", "tan", "ate"}))
+	fmt.Println("Top K Frequent:", topKFrequent([]int{1, 1, 1, 2, 2, 3}, 2))
+	fmt.Println("Character Replacement:", characterReplacement("AABABBA", 1))
+	fmt.Println("Subarray Sum:", subarraySum([]int{1, 1, 1}, 2))
+	fmt.Println("Merge Intervals:", merge([][]int{{1, 3}, {2, 6}, {8, 10}, {15, 18}}))
 }
